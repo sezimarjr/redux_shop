@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // Components
@@ -9,13 +9,20 @@ import * as Styles from "./styles";
 import rootReducer from "../../redux/root-reducer";
 import UserActionTypes from "../../redux/user/action-types";
 import { loginUser, logoutUser } from "../../redux/user/actions";
+import { selectProductsCount } from "../../redux/cart/cart.selectors";
 
 function Header() {
   const [cartIsVisible, setCartIsVisible] = useState(false);
 
   const { currentUser } = useSelector((rootReducer) => rootReducer.userReducer);
+  const { products } = useSelector((rootReducer) => rootReducer.cartReducer);
   const dispatch = useDispatch();
-  console.log({ currentUser });
+
+  // const productsCount = useMemo(() => {
+  //   return products.reduce((acc, curr) => acc + curr.quantity, 0);
+  // }, [products]);
+
+  const productsCount = useSelector(selectProductsCount);
 
   const handleCartClick = () => {
     setCartIsVisible(true);
@@ -38,7 +45,7 @@ function Header() {
         ) : (
           <div onClick={handleLoginClick}>Login</div>
         )}
-        <div onClick={handleCartClick}>Carrinho</div>
+        <div onClick={handleCartClick}>Carrinho ({productsCount})</div>
       </Styles.Buttons>
 
       <Cart isVisible={cartIsVisible} setIsVisible={setCartIsVisible} />
